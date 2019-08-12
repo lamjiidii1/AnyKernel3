@@ -1,4 +1,4 @@
 dtbo.img
 files/Image
-files/sdm710.dtb
+files/*.dtb
 *.zip
