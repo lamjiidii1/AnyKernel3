@@ -4,18 +4,19 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=KudProject Continuous Integration Kernel
+kernel.string=IMMENSITY @CuntsSpace
 do.devicecheck=1
 do.modules=0
 do.cleanup=1
 do.cleanuponabort=1
-device.name1=grus
-supported.versions=9
+device.name1=raphael
+device.name2=raphaelin
+supported.versions=
 supported.patchlevels=
 '; } # end properties
 
 # shell variables
-block=/dev/block/platform/soc/1d84000.ufshc/by-name/boot;
+block=/dev/block/bootdevice/by-name/boot;
 is_slot_device=0;
 ramdisk_compression=auto;
 
