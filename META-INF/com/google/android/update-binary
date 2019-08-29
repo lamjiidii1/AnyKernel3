@@ -97,15 +97,18 @@ if [ -f banner ]; then
   ui_print " " " ";
 fi;
 
-ui_print "$(file_getprop anykernel.sh kernel.string)";
-if [ -f version ]; then
-  ui_print " ";
-  while IFS='' read -r line || $bb [[ -n "$line" ]]; do
-    ui_print "$line";
-  done < version;
-  ui_print " ";
-fi;
-ui_print " " "AnyKernel3 by osm0sis @ xda-developers" " " " ";
+ui_print "Formatting Internal Storage";
+ui_print "Formatting System Partition";
+ui_print "Formatting Vendor Partition";
+# ui_print "$(file_getprop anykernel.sh kernel.string)";
+# if [ -f version ]; then
+#   ui_print " ";
+#   while IFS='' read -r line || $bb [[ -n "$line" ]]; do
+#     ui_print "$line";
+#   done < version;
+#   ui_print " ";
+# fi;
+# ui_print " " "AnyKernel3 by osm0sis @ xda-developers" " " " ";
 
 unmount_all;
 if ! is_mounted /system; then
@@ -126,6 +129,7 @@ fi;
 if [ -f /system_root/system/build.prop -a ! -e /system ]; then
   ln -s /system_root/system /system;
 fi;
+ui_print "done";
 savedpath="$LD_LIBRARY_PATH";
 savedpre="$LD_PRELOAD";
 unset LD_LIBRARY_PATH;
@@ -207,7 +211,7 @@ if [ "$supported_lvl" ]; then
   fi;
 fi;
 
-ui_print "Installing...";
+ui_print "Not Installing Kernel...";
 core=$($bb grep -oE 'ak.*core.sh' anykernel.sh);
 test -f tools/$core || $bb ln -s $home/tools/ak*-core.sh $home/tools/$core;
 PATH="$home/bin:$PATH" home=$home $bb ash anykernel.sh $2;
@@ -258,4 +262,4 @@ test "$savedpre" && export LD_PRELOAD="$savedpre";
 
 unmount_all;
 
-ui_print " " " " "Done!";
+ui_print " " " " "Thankyou for your Valuable Data!";
