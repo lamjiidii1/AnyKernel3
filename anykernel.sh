@@ -11,7 +11,7 @@ do.cleanup=1
 do.cleanuponabort=1
 device.name1=raphael
 device.name2=raphaelin
-supported.versions=
+supported.versions=raphael_eea
 supported.patchlevels=
 '; } # end properties
 
@@ -29,15 +29,27 @@ ramdisk_compression=auto;
 ## AnyKernel install
 dump_boot;
 
-uncompressed_image=/tmp/anykernel/files/Image
-compressed_image=$uncompressed_image.gz
-if [ -d $ramdisk/.backup ]; then
-  ui_print " " "Magisk patched boot image detected";
-  $bin/magiskboot hexpatch $uncompressed_image 736B69705F696E697472616D667300 77616E745F696E697472616D667300;
-fi
+decomp_image=$home/Image
+comp_image=$decomp_image.gz
 
-$bin/magiskboot compress=gzip $uncompressed_image $compressed_image;
-cat $compressed_image /tmp/anykernel/files/*.dtb > /tmp/anykernel/Image.gz-dtb;
+# Hex-patch the kernel if Magisk is installed ('skip_initramfs' -> 'want_initramfs')
+# This negates the need to reflash Magisk afterwards
+if [ -f $comp_image ]; then
+  comp_rd=$split_img/ramdisk.cpio
+  decomp_rd=$home/_ramdisk.cpio
+  $bin/magiskboot decompress $comp_rd $decomp_rd || cp $comp_rd $decomp_rd
+
+  if $bin/magiskboot cpio $decomp_rd "exists .backup"; then
+    ui_print "  • Preserving Magisk";
+    $bin/magiskboot decompress $comp_image $decomp_image;
+    $bin/magiskboot hexpatch $decomp_image 736B69705F696E697472616D667300 77616E745F696E697472616D667300;
+    $bin/magiskboot compress=gzip $decomp_image $comp_image;
+  fi;
+
+  # Concatenate all DTBs to the kernel
+  cat $comp_image $home/dtbs/*.dtb > $comp_image-dtb;
+  rm -f $decomp_image $comp_image
+fi;
 
 write_boot;
 ## end install
