@@ -1,56 +1,48 @@
-# AnyKernel3 Ramdisk Mod Script
+# AnyKernel2 Ramdisk Mod Script
 # osm0sis @ xda-developers
 
 ## AnyKernel setup
 # begin properties
-properties() { '
-kernel.string=IMMENSITY @CuntsSpace
+properties() {
+kernel.string=IMMENSITY - KERNEL by @UtsavTheCunt
 do.devicecheck=1
 do.modules=0
 do.cleanup=1
-do.cleanuponabort=1
-device.name1=raphael
-device.name2=raphaelin
-supported.versions=raphael_eea
-supported.patchlevels=
-'; } # end properties
+do.cleanuponabort=0
+device.name1=potter
+device.name2=potter_retail
+} # end properties
 
 # shell variables
 block=/dev/block/bootdevice/by-name/boot;
 is_slot_device=0;
-ramdisk_compression=auto;
-
 
 ## AnyKernel methods (DO NOT CHANGE)
 # import patching functions/variables - see for reference
-. tools/ak3-core.sh;
+. /tmp/anykernel/tools/ak2-core.sh;
 
+
+## AnyKernel permissions
+# set permissions for included ramdisk files
+chmod -R 750 $ramdisk/*;
+chown -R root:root $ramdisk/*;
 
 ## AnyKernel install
 dump_boot;
 
-decomp_image=$home/Image
-comp_image=$decomp_image.gz
+# begin ramdisk changes
 
-# Hex-patch the kernel if Magisk is installed ('skip_initramfs' -> 'want_initramfs')
-# This negates the need to reflash Magisk afterwards
-if [ -f $comp_image ]; then
-  comp_rd=$split_img/ramdisk.cpio
-  decomp_rd=$home/_ramdisk.cpio
-  $bin/magiskboot decompress $comp_rd $decomp_rd || cp $comp_rd $decomp_rd
+rm $ramdisk/init.optimus.rc
+rm $ramdisk/init.extended_kernel.rc
+# Set executable
 
-  if $bin/magiskboot cpio $decomp_rd "exists .backup"; then
-    ui_print "  • Preserving Magisk";
-    $bin/magiskboot decompress $comp_image $decomp_image;
-    $bin/magiskboot hexpatch $decomp_image 736B69705F696E697472616D667300 77616E745F696E697472616D667300;
-    $bin/magiskboot compress=gzip $decomp_image $comp_image;
-  fi;
+chmod 755 $ramdisk/init.immensity.sh
 
-  # Concatenate all DTBs to the kernel
-  cat $comp_image $home/dtbs/*.dtb > $comp_image-dtb;
-  rm -f $decomp_image $comp_image
-fi;
+insert_line init.rc "init.immensity.rc" after "import /init.usb.configfs.rc" "import /init.immensity.rc";
+
+# end ramdisk changes
 
 write_boot;
+
 ## end install
 
