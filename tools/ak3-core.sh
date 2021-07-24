@@ -15,12 +15,8 @@ split_img=$home/split_img;
 # ui_print "<text>" [...]
 ui_print() {
   until [ ! "$1" ]; do
-    if $BOOTMODE; then
-      echo "$1";
-    else
-      echo "ui_print $1
-        ui_print" >> /proc/self/fd/$OUTFD;
-    fi;
+    echo "ui_print $1
+      ui_print" >> /proc/self/fd/$OUTFD;
     shift;
   done;
 }
@@ -326,7 +322,7 @@ flash_boot() {
           $bin/magiskboot cpio ramdisk.cpio test;
           magisk_patched=$?;
         fi;
-        if [ $((magisk_patched & 3)) -eq 0 ]; then
+        if [ $((magisk_patched & 3)) -eq 1 ]; then
           comp=$($bin/magiskboot decompress kernel 2>&1 | grep -v 'raw' | sed -n 's;.*\[\(.*\)\];\1;p');
           ($bin/magiskboot split $kernel || $bin/magiskboot decompress $kernel kernel) 2>/dev/null;
           if [ $? != 0 -a "$comp" ]; then
