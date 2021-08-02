@@ -9,8 +9,8 @@ do.modules=0
 do.systemless=1
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=aliothin
-device.name2=alioth
+device.name1=cmi
+device.name2=Mi 10 Pro
 device.name3=
 device.name4=
 device.name5=
@@ -19,8 +19,8 @@ supported.patchlevels=
 '; } # end properties
 
 # shell variables
-block=boot;
-is_slot_device=1;
+block=/dev/block/bootdevice/by-name/boot;
+is_slot_device=0;
 ramdisk_compression=auto;
 
 ## AnyKernel methods (DO NOT CHANGE)
